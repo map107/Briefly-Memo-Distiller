@@ -1,5 +1,4 @@
 import { useLocation } from "wouter";
-import logoUrl from "@assets/briefly_logo_transparent.png";
 import { ArrowRight, Upload, Settings2, Zap, Globe, GitBranch, Mail, FileText, MessageSquare } from "lucide-react";
 
 const STEPS = [
@@ -53,7 +52,7 @@ export default function Landing() {
     <div className="min-h-screen bg-[#F9FAFB] text-[#111827]" style={{ fontFamily: "Inter, sans-serif" }}>
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#E5E7EB]">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <img src={logoUrl} alt="Briefly" className="h-7" />
+          <span className="text-xl font-bold text-[#111827]" style={{ fontFamily: "Merriweather, serif" }}>Briefly</span>
           <button
             onClick={() => setLocation("/new")}
             className="flex items-center gap-2 bg-[#111827] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#1f2937] transition-colors"
@@ -266,7 +265,7 @@ export default function Landing() {
 
       <footer className="bg-[#111827] border-t border-white/10 py-10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <img src={logoUrl} alt="Briefly" className="h-6" />
+          <span className="text-base font-bold text-white" style={{ fontFamily: "Merriweather, serif" }}>Briefly</span>
           <p className="text-white/35 text-sm">Legal communication, simplified.</p>
           <button
             onClick={() => setLocation("/new")}

@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { FileText, History } from "lucide-react";
 import { cn } from "@/lib/utils";
-import logoUrl from "@assets/briefly_logo_transparent.png";
 
 export function Layout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
@@ -16,7 +15,7 @@ export function Layout({ children }: { children: ReactNode }) {
     <div className="flex min-h-[100dvh] w-full bg-background">
       <aside className="w-64 border-r border-sidebar-border bg-sidebar text-sidebar-foreground flex-shrink-0 flex flex-col">
         <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
-          <img src={logoUrl} alt="Briefly" className="h-6 brightness-0 invert" />
+          <span className="font-serif text-xl font-bold tracking-tight text-sidebar-primary-foreground">Briefly</span>
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-1">

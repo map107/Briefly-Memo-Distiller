@@ -3,13 +3,17 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Legal Memo Simplifier API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: memos
+    description: Memo management
+  - name: summaries
+    description: AI-generated summaries
 paths:
   /healthz:
     get:
@@ -24,6 +28,151 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /memos:
+    get:
+      operationId: listMemos
+      tags: [memos]
+      summary: List all memos
+      responses:
+        "200":
+          description: List of memos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Memo"
+    post:
+      operationId: createMemo
+      tags: [memos]
+      summary: Upload or paste a memo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Memo"
+
+  /memos/stats:
+    get:
+      operationId: getMemoStats
+      tags: [memos]
+      summary: Get memo and summary statistics
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoStats"
+
+  /memos/{id}:
+    get:
+      operationId: getMemo
+      tags: [memos]
+      summary: Get a memo by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Memo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Memo"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteMemo
+      tags: [memos]
+      summary: Delete a memo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /memos/{id}/summaries:
+    get:
+      operationId: listSummaries
+      tags: [summaries]
+      summary: List summaries for a memo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Summary"
+    post:
+      operationId: generateSummary
+      tags: [summaries]
+      summary: Generate an AI summary for a memo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SummaryRequest"
+      responses:
+        "201":
+          description: Generated summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Summary"
+
+  /memos/{memoId}/summaries/{summaryId}:
+    delete:
+      operationId: deleteSummary
+      tags: [summaries]
+      summary: Delete a summary
+      parameters:
+        - name: memoId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: summaryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +183,90 @@ components:
       required:
         - status
 
+    Memo:
+      type: object
+      required: [id, title, content, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        fileName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        summaryCount:
+          type: integer
+
+    MemoInput:
+      type: object
+      required: [title, content]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        content:
+          type: string
+          minLength: 1
+        fileName:
+          type: string
+
+    ExtractedText:
+      type: object
+      required: [text, fileName]
+      properties:
+        text:
+          type: string
+        fileName:
+          type: string
+
+    Summary:
+      type: object
+      required: [id, memoId, audience, goal, format, content, createdAt]
+      properties:
+        id:
+          type: integer
+        memoId:
+          type: integer
+        audience:
+          type: string
+        goal:
+          type: string
+        format:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    SummaryRequest:
+      type: object
+      required: [audience, goal, format]
+      properties:
+        audience:
+          type: string
+          description: "Who will receive this summary (e.g. in-house team, board, business unit)"
+        goal:
+          type: string
+          description: "What they want from the advice (e.g. understand key risks, decide on next steps)"
+        format:
+          type: string
+          enum: [email, one-pager, slack]
+          description: "Output format"
+
+    MemoStats:
+      type: object
+      required: [totalMemos, totalSummaries, recentMemos]
+      properties:
+        totalMemos:
+          type: integer
+        totalSummaries:
+          type: integer
+        recentMemos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Memo"

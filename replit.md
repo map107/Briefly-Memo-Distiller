@@ -1,6 +1,6 @@
-# BriefCast
+# Briefly
 
-A legal memo simplifier that helps law firms transform dense legal advice into clear, action-oriented summaries for business clients.
+A modern legal communication platform that turns dense legal analysis into practical, business-ready guidance. Helps law firms transform complex legal memos into clear, action-oriented summaries for business clients.
 
 ## Run & Operate
 
@@ -42,12 +42,21 @@ A legal memo simplifier that helps law firms transform dense legal advice into c
 
 ## Product
 
-- Upload a legal memo (PDF, DOCX, or paste text)
+- Marketing landing page at `/` (brand: Briefly — calm, intelligent, commercially minded)
+- App starts at `/new` — upload a legal memo (PDF, DOCX, or paste text)
 - Configure: who the recipient is, what they need from the advice
-- Choose output format: short email, one-pager, or Slack bullets
+- Choose output format: short email, one-pager, Slack bullets, world map, or flowchart
 - AI generates a plain-English, action-oriented TLDR summary
 - View and copy all previous summaries per memo
 - History view shows all memos with summary counts and stats
+
+## Brand
+
+- Name: Briefly
+- Logo: `attached_assets/briefly_logo_transparent.png` (transparent PNG, imported via `@assets` alias)
+- Palette: Midnight #111827, Cloud White #F9FAFB, Electric Blue #3B82F6, Slate Grey #6B7280
+- Typography: Inter (UI/body), Merriweather (editorial headings)
+- Tone: Direct, clear, action-oriented. Closer to Linear/Notion/Stripe than legacy legal software.
 
 ## User preferences
 

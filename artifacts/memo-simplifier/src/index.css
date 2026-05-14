@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..800;1,400..800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
 
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -99,11 +99,11 @@
   --popover-foreground: 220 30% 15%;
   --popover-border: 220 15% 90%;
 
-  --primary: 215 25% 27%;
+  --primary: 217 91% 60%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 210 15% 94%;
-  --secondary-foreground: 215 25% 27%;
+  --secondary-foreground: 215 25% 15%;
 
   --muted: 220 15% 95%;
   --muted-foreground: 220 10% 45%;
@@ -115,7 +115,7 @@
   --destructive-foreground: 0 0% 100%;
 
   --input: 220 15% 85%;
-  --ring: 215 25% 27%;
+  --ring: 217 91% 60%;
   
   --chart-1: 215 25% 27%;
   --chart-2: 30 15% 60%;
@@ -123,8 +123,8 @@
   --chart-4: 215 15% 60%;
   --chart-5: 0 10% 40%;
 
-  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
-  --app-font-serif: 'Playfair Display', serif;
+  --app-font-sans: 'Inter', sans-serif;
+  --app-font-serif: 'Merriweather', serif;
   --app-font-mono: Menlo, monospace;
   
   --radius: 0.25rem;

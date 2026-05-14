@@ -56,7 +56,7 @@ export default function History() {
           <h1 className="text-4xl font-serif font-bold text-primary">History</h1>
           <p className="text-muted-foreground mt-1">All your legal memos and generated summaries.</p>
         </div>
-        <Button onClick={() => setLocation("/")} className="gap-2" data-testid="button-new-memo">
+        <Button onClick={() => setLocation("/new")} className="gap-2" data-testid="button-new-memo">
           <PlusCircle className="w-4 h-4" />
           New memo
         </Button>
@@ -151,7 +151,7 @@ export default function History() {
           </div>
           <h3 className="font-serif font-semibold text-foreground text-lg mb-1">No memos yet</h3>
           <p className="text-sm text-muted-foreground mb-6">Upload your first legal memo to get started.</p>
-          <Button onClick={() => setLocation("/")} data-testid="button-get-started">
+          <Button onClick={() => setLocation("/new")} data-testid="button-get-started">
             Upload a memo
           </Button>
         </div>

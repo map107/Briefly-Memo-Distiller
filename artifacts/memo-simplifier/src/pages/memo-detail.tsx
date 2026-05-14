@@ -189,7 +189,7 @@ export default function MemoDetail() {
     return (
       <div className="max-w-4xl mx-auto p-8">
         <p className="text-muted-foreground">Memo not found.</p>
-        <Button variant="link" onClick={() => setLocation("/")} className="p-0 mt-2">
+        <Button variant="link" onClick={() => setLocation("/new")} className="p-0 mt-2">
           Go back home
         </Button>
       </div>
@@ -201,7 +201,7 @@ export default function MemoDetail() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <button
-            onClick={() => setLocation("/")}
+            onClick={() => setLocation("/new")}
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-3"
             data-testid="button-back"
           >

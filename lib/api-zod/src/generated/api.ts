@@ -115,7 +115,9 @@ export const GenerateSummaryBody = zod.object({
     .describe(
       "What they want from the advice (e.g. understand key risks, decide on next steps)",
     ),
-  format: zod.enum(["email", "one-pager", "slack"]).describe("Output format"),
+  format: zod
+    .enum(["email", "one-pager", "slack", "world-map", "flowchart"])
+    .describe("Output format"),
 });
 
 /**

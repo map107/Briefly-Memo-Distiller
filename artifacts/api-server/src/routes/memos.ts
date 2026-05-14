@@ -269,6 +269,75 @@ ${memoContent.slice(0, 15000)}
 Write the summary now:`;
 }
 
+function buildWorldMapPrompt(memoContent: string, audience: string, goal: string): string {
+  return `You are an expert at analysing legal memos and extracting geographic and jurisdictional information.
+
+Analyse the following legal memo and identify all countries, jurisdictions, or regions that are relevant to this matter.
+
+**Recipient context:** ${audience} — ${goal}
+
+Return ONLY a valid JSON object with this exact structure (no markdown, no explanation, just the JSON):
+{
+  "title": "A concise title for the geographic scope of this matter (e.g. 'Jurisdictional Map: UK–US Acquisition')",
+  "countries": [
+    {
+      "name": "Full English country name as it appears on a world map (e.g. 'United States', 'United Kingdom', 'Germany')",
+      "role": "primary or secondary (primary = governing law / main jurisdiction, secondary = subsidiary / mentioned)",
+      "note": "One short phrase explaining why this jurisdiction is relevant (e.g. 'Governing law — Delaware', 'Target company incorporated here')"
+    }
+  ],
+  "summary": "One or two plain-English sentences summarising the geographic scope and why it matters for the recipient."
+}
+
+If no specific countries are mentioned, return an empty countries array and explain in the summary.
+Only include countries that are genuinely relevant — do not guess.
+
+**Legal memo:**
+---
+${memoContent.slice(0, 15000)}
+---`;
+}
+
+function buildFlowchartPrompt(memoContent: string, audience: string, goal: string): string {
+  return `You are an expert at analysing legal memos and extracting structured processes, decision trees, and timelines.
+
+Analyse the following legal memo and create a clear flowchart of the key process, decision points, or action sequence.
+
+**Recipient context:** ${audience} — ${goal}
+
+Return ONLY a valid JSON object with this exact structure (no markdown, no explanation, just the JSON):
+{
+  "title": "A concise title for this flowchart (e.g. 'IP Assignment Review Process', 'Acquisition Approval Pathway')",
+  "nodes": [
+    {
+      "id": "unique short id (e.g. 'start', 'n1', 'n2', 'd1')",
+      "label": "Short plain-English label (max 6 words). Use \\n for line breaks if needed.",
+      "type": "one of: start | action | decision | end"
+    }
+  ],
+  "edges": [
+    {
+      "from": "source node id",
+      "to": "target node id",
+      "label": "Optional short label for this path (e.g. 'Yes', 'No', 'Approved'). Omit if not needed."
+    }
+  ]
+}
+
+Rules:
+- Exactly one node with type "start" and one or more with type "end".
+- Decision nodes should have exactly two outgoing edges (Yes / No or similar).
+- Action nodes represent steps the business must take.
+- Keep labels concise — 5 words max per node.
+- Include 5–10 nodes total. Do not over-complicate it.
+- Ensure every node id referenced in edges exists in the nodes array.
+
+**Legal memo:**
+---
+${memoContent.slice(0, 15000)}
+---`;
+}
+
 // POST /api/memos/:id/summaries
 router.post("/:id/summaries", async (req, res) => {
   try {
@@ -293,7 +362,14 @@ router.post("/:id/summaries", async (req, res) => {
       return;
     }
 
-    const prompt = buildSummaryPrompt(memo.content, audience, goal, format);
+    let prompt: string;
+    if (format === "world-map") {
+      prompt = buildWorldMapPrompt(memo.content, audience, goal);
+    } else if (format === "flowchart") {
+      prompt = buildFlowchartPrompt(memo.content, audience, goal);
+    } else {
+      prompt = buildSummaryPrompt(memo.content, audience, goal, format);
+    }
 
     const response = await openai.chat.completions.create({
       model: "gpt-5.4",
@@ -301,7 +377,22 @@ router.post("/:id/summaries", async (req, res) => {
       messages: [{ role: "user", content: prompt }],
     });
 
-    const content = response.choices[0]?.message?.content ?? "";
+    const raw = response.choices[0]?.message?.content ?? "";
+
+    // For JSON-based formats, validate and strip any accidental markdown fences
+    let content = raw;
+    if (format === "world-map" || format === "flowchart") {
+      const match = raw.match(/```(?:json)?\s*([\s\S]*?)```/) ?? raw.match(/(\{[\s\S]*\})/);
+      content = match ? match[1]!.trim() : raw.trim();
+      // Validate it parses
+      try {
+        JSON.parse(content);
+      } catch {
+        req.log.error({ raw }, "AI returned invalid JSON for visualization format");
+        res.status(500).json({ error: "AI returned an unexpected format. Please try again." });
+        return;
+      }
+    }
 
     const [summary] = await db
       .insert(summariesTable)

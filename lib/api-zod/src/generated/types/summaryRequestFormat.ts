@@ -16,4 +16,6 @@ export const SummaryRequestFormat = {
   email: "email",
   "one-pager": "one-pager",
   slack: "slack",
+  "world-map": "world-map",
+  flowchart: "flowchart",
 } as const;

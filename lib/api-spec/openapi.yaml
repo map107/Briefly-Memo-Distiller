@@ -255,7 +255,7 @@ components:
           description: "What they want from the advice (e.g. understand key risks, decide on next steps)"
         format:
           type: string
-          enum: [email, one-pager, slack]
+          enum: [email, one-pager, slack, world-map, flowchart]
           description: "Output format"
 
     MemoStats:

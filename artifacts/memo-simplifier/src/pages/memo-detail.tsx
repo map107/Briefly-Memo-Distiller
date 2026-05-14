@@ -15,15 +15,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Trash2, Mail, FileText, MessageSquare, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react";
+import { Loader2, Trash2, Mail, FileText, MessageSquare, ChevronDown, ChevronUp, ArrowLeft, Globe, GitBranch } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { WorldMapViz, type WorldMapData } from "@/components/WorldMapViz";
+import { FlowchartViz, type FlowchartData } from "@/components/FlowchartViz";
 
 const FORMAT_LABELS: Record<string, { label: string; icon: typeof Mail }> = {
   email: { label: "Short email", icon: Mail },
   "one-pager": { label: "One-pager", icon: FileText },
   slack: { label: "Slack bullets", icon: MessageSquare },
+  "world-map": { label: "World map", icon: Globe },
+  flowchart: { label: "Flowchart", icon: GitBranch },
 };
+
+const VIZ_FORMATS = new Set(["world-map", "flowchart"]);
 
 function SummaryCard({ summary, onDelete }: { summary: { id: number; memoId: number; audience: string; goal: string; format: string; content: string; createdAt: string }; onDelete: () => void }) {
   const [expanded, setExpanded] = useState(true);
@@ -67,19 +73,27 @@ function SummaryCard({ summary, onDelete }: { summary: { id: number; memoId: num
 
       {expanded && (
         <div className="p-6">
-          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
-            {summary.content}
-          </pre>
-          <div className="mt-4 pt-4 border-t flex justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigator.clipboard.writeText(summary.content)}
-              data-testid={`button-copy-summary-${summary.id}`}
-            >
-              Copy to clipboard
-            </Button>
-          </div>
+          {summary.format === "world-map" ? (
+            <WorldMapViz data={JSON.parse(summary.content) as WorldMapData} />
+          ) : summary.format === "flowchart" ? (
+            <FlowchartViz data={JSON.parse(summary.content) as FlowchartData} />
+          ) : (
+            <>
+              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
+                {summary.content}
+              </pre>
+              <div className="mt-4 pt-4 border-t flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigator.clipboard.writeText(summary.content)}
+                  data-testid={`button-copy-summary-${summary.id}`}
+                >
+                  Copy to clipboard
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
@@ -274,13 +288,15 @@ export default function MemoDetail() {
             Output format
           </Label>
           <Select value={format} onValueChange={setFormat}>
-            <SelectTrigger className="w-full md:w-64" data-testid="select-format">
+            <SelectTrigger className="w-full md:w-72" data-testid="select-format">
               <SelectValue placeholder="Choose a format..." />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="email">Short email</SelectItem>
               <SelectItem value="one-pager">One-pager</SelectItem>
               <SelectItem value="slack">Slack bullets</SelectItem>
+              <SelectItem value="world-map">World map</SelectItem>
+              <SelectItem value="flowchart">Flowchart</SelectItem>
             </SelectContent>
           </Select>
         </div>
